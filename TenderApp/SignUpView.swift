@@ -1,19 +1,15 @@
 import SwiftUI
 
-struct SignInView: View {
+struct SignUpView: View {
+    @State private var fullName = ""
     @State private var email = ""
     @State private var password = ""
-    @State private var selectedUserType: UserType = .vendor
-    @State private var showingOrganizationDashboard = false
-    @State private var showingVendorDashboard = false
-    @State private var showingSignUp = false
+    @State private var selectedRole = ""
+    @State private var companyName = ""
     @State private var showingRolePicker = false
     @Environment(\.dismiss) private var dismiss
     
-    enum UserType: String, CaseIterable {
-        case vendor = "Vendor"
-        case organization = "Organization"
-    }
+    let roles = ["Organization", "Vendor"]
     
     var body: some View {
         NavigationView {
@@ -36,11 +32,11 @@ struct SignInView: View {
                     VStack(spacing: 32) {
                         // Title Section
                         VStack(spacing: 8) {
-                            Text("Welcome Back")
+                            Text("Create Account")
                                 .font(.system(size: 36, weight: .bold))
                                 .foregroundColor(.black)
                             
-                            Text("Sign in to your account")
+                            Text("Join Tender today")
                                 .font(.system(size: 16))
                                 .foregroundColor(.gray)
                         }
@@ -48,41 +44,18 @@ struct SignInView: View {
                         
                         // Form Fields
                         VStack(spacing: 24) {
-                            // Role Field
+                            // Full Name Field
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Role")
+                                Text("Full Name")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.black)
                                 
-                                Button(action: {
-                                    showingRolePicker = true
-                                }) {
-                                    HStack {
-                                        Text(selectedUserType.rawValue)
-                                            .foregroundColor(.black)
-                                            .font(.system(size: 16))
-                                        
-                                        Spacer()
-                                        
-                                        Image(systemName: "chevron.down")
-                                            .foregroundColor(.gray)
-                                            .font(.system(size: 14))
-                                    }
+                                TextField("Enter your full name", text: $fullName)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 16)
                                     .background(Color.gray.opacity(0.1))
                                     .cornerRadius(8)
-                                }
-                                .actionSheet(isPresented: $showingRolePicker) {
-                                    ActionSheet(
-                                        title: Text("Select Role"),
-                                        buttons: UserType.allCases.map { type in
-                                            .default(Text(type.rawValue)) {
-                                                selectedUserType = type
-                                            }
-                                        } + [.cancel()]
-                                    )
-                                }
+                                    .font(.system(size: 16))
                             }
                             
                             // Email Field
@@ -101,6 +74,61 @@ struct SignInView: View {
                                     .font(.system(size: 16))
                             }
                             
+                            // Role Field
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Role")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.black)
+                                
+                                Button(action: {
+                                    showingRolePicker = true
+                                }) {
+                                    HStack {
+                                        Text(selectedRole.isEmpty ? "Select Role" : selectedRole)
+                                            .foregroundColor(selectedRole.isEmpty ? .gray : .black)
+                                            .font(.system(size: 16))
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.down")
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 14))
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 16)
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(8)
+                                }
+                                .actionSheet(isPresented: $showingRolePicker) {
+                                    ActionSheet(
+                                        title: Text("Select Role"),
+                                        buttons: roles.map { role in
+                                            .default(Text(role)) {
+                                                selectedRole = role
+                                            }
+                                        } + [.cancel()]
+                                    )
+                                }
+                            }
+                            
+                            // Company Name Field (only for Vendors)
+                            if selectedRole == "Vendor" {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Company Name")
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.black)
+                                    
+                                    TextField("Enter your company name", text: $companyName)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 16)
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(8)
+                                        .font(.system(size: 16))
+                                }
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                                .animation(.easeInOut(duration: 0.3), value: selectedRole)
+                            }
+                            
                             // Password Field
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Password")
@@ -117,12 +145,13 @@ struct SignInView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // Sign In Button and Options
+                        // Sign Up Button
                         VStack(spacing: 16) {
                             Button(action: {
-                                handleSignIn()
+                                // Handle sign up action
+                                handleSignUp()
                             }) {
-                                Text("Sign In")
+                                Text("Sign Up")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -132,56 +161,14 @@ struct SignInView: View {
                             }
                             .padding(.horizontal, 20)
                             
-                            // Alternative Options
-                            VStack(spacing: 16) {
-                                HStack {
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.3))
-                                        .frame(height: 1)
-                                    
-                                    Text("or")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.gray)
-                                        .padding(.horizontal, 16)
-                                    
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.3))
-                                        .frame(height: 1)
-                                }
-                                .padding(.horizontal, 20)
-                                
-                                Button(action: {
-                                    // Handle Face ID sign in
-                                }) {
-                                    HStack {
-                                        Image(systemName: "faceid")
-                                            .font(.system(size: 16))
-                                        Text("Sign in with Face ID")
-                                            .font(.system(size: 16, weight: .medium))
-                                    }
-                                    .foregroundColor(.blue)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
-                                    .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(8)
-                                }
-                                .padding(.horizontal, 20)
-                                
-                                Button("Forgot your password?") {
-                                    // Handle forgot password
-                                }
-                                .foregroundColor(.blue)
-                                .font(.system(size: 16))
-                            }
-                            
-                            // Sign Up Link
+                            // Sign In Link
                             HStack {
-                                Text("Don't have an account?")
+                                Text("Already have an account?")
                                     .foregroundColor(.gray)
                                     .font(.system(size: 16))
                                 
-                                Button("Sign Up") {
-                                    showingSignUp = true
+                                Button("Sign In") {
+                                    dismiss()
                                 }
                                 .foregroundColor(.blue)
                                 .font(.system(size: 16))
@@ -195,40 +182,39 @@ struct SignInView: View {
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .fullScreenCover(isPresented: $showingOrganizationDashboard) {
-            OrganizationDashboardView()
-        }
-        .fullScreenCover(isPresented: $showingVendorDashboard) {
-            VendorDashboardView()
-        }
-        .sheet(isPresented: $showingSignUp) {
-            SignUpView()
-        }
     }
     
-    
-    private func handleSignIn() {
+    private func handleSignUp() {
         // Validate form
-        guard !email.isEmpty, !password.isEmpty else {
+        guard !fullName.isEmpty,
+              !email.isEmpty,
+              !selectedRole.isEmpty,
+              !password.isEmpty else {
             // Show error message
             return
         }
         
-        // TODO: Implement actual authentication logic
-        print("Sign in with:")
-        print("Role: \(selectedUserType.rawValue)")
+        // Additional validation for vendors
+        if selectedRole == "Vendor" && companyName.isEmpty {
+            // Show error message for missing company name
+            return
+        }
+        
+        // TODO: Implement actual sign up logic
+        print("Sign up with:")
+        print("Full Name: \(fullName)")
         print("Email: \(email)")
+        print("Role: \(selectedRole)")
+        if selectedRole == "Vendor" {
+            print("Company: \(companyName)")
+        }
         print("Password: [HIDDEN]")
         
-        // Navigate based on user type
-        if selectedUserType == .organization {
-            showingOrganizationDashboard = true
-        } else if selectedUserType == .vendor {
-            showingVendorDashboard = true
-        }
+        // For now, just dismiss the view
+        dismiss()
     }
 }
 
 #Preview {
-    SignInView()
+    SignUpView()
 }
