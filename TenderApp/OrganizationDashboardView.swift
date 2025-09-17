@@ -35,7 +35,7 @@ struct OrganizationDashboardView: View {
         .navigationBarHidden(true)
         .sheet(isPresented: $showingTenderDetails) {
             if let selectedTender = selectedTender {
-                ViewTenderDetails(tender: selectedTender)
+                ViewTenderDetails(tender: selectedTender, isOrganizationView: true)
             }
         }
     }

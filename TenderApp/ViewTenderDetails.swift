@@ -3,7 +3,17 @@ import SwiftData
 
 struct ViewTenderDetails: View {
     let tender: TenderData
+    let isOrganizationView: Bool
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @State private var showingManageOptions = false
+    @State private var showingDeleteConfirmation = false
+    @State private var showingEditView = false
+    
+    init(tender: TenderData, isOrganizationView: Bool = false) {
+        self.tender = tender
+        self.isOrganizationView = isOrganizationView
+    }
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -69,41 +79,65 @@ struct ViewTenderDetails: View {
                     
                     if tender.status == .active {
                         VStack(spacing: 12) {
-                            Button(action: {
-                                
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "paperplane.fill")
-                                        .font(.system(size: 14, weight: .semibold))
-                                    Text("Submit Proposal")
-                                        .font(.system(size: 16, weight: .semibold))
+                            if isOrganizationView {
+                                // Organization view - show Manage Tender button
+                                Button(action: {
+                                    showingManageOptions = true
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "gearshape.fill")
+                                            .font(.system(size: 14, weight: .semibold))
+                                        Text("Manage Tender")
+                                            .font(.system(size: 16, weight: .semibold))
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 52)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(AppColors.primary)
+                                    )
                                 }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 52)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(AppColors.primary)
-                                )
+                            } else {
+                                // Vendor view - show Submit Proposal button
+                                Button(action: {
+                                    
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "paperplane.fill")
+                                            .font(.system(size: 14, weight: .semibold))
+                                        Text("Submit Proposal")
+                                            .font(.system(size: 16, weight: .semibold))
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 52)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(AppColors.primary)
+                                    )
+                                }
                             }
                             
-                            Button(action: {
-                                
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "heart")
-                                        .font(.system(size: 14, weight: .medium))
-                                    Text("Save to Favorites")
-                                        .font(.system(size: 16, weight: .medium))
+                            if !isOrganizationView {
+                                Button(action: {
+                                    
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "heart")
+                                            .font(.system(size: 14, weight: .medium))
+                                        Text("Save to Favorites")
+                                            .font(.system(size: 16, weight: .medium))
+                                    }
+                                    .foregroundColor(AppColors.primary)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 52)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppColors.primary, lineWidth: 1)
+                                            .fill(Color.clear)
+                                    )
                                 }
-                                .foregroundColor(AppColors.primary)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 52)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(AppColors.primary, lineWidth: 1)
-                                        .fill(Color.clear)
-                                )
                             }
                         }
                     }
@@ -137,6 +171,35 @@ struct ViewTenderDetails: View {
                 }
             }
         }
+        .actionSheet(isPresented: $showingManageOptions) {
+            ActionSheet(
+                title: Text("Manage Tender"),
+                message: Text("Choose an action for this tender"),
+                buttons: [
+                    .default(Text("Edit Tender Details")) {
+                        showingEditView = true
+                    },
+                    .destructive(Text("Close Tender")) {
+                        closeTender()
+                    },
+                    .destructive(Text("Delete Tender")) {
+                        showingDeleteConfirmation = true
+                    },
+                    .cancel()
+                ]
+            )
+        }
+        .alert("Delete Tender", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                deleteTender()
+            }
+        } message: {
+            Text("Are you sure you want to delete this tender? This action cannot be undone.")
+        }
+        .sheet(isPresented: $showingEditView) {
+            EditTenderView(tender: tender)
+        }
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -144,6 +207,25 @@ struct ViewTenderDetails: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
         return formatter.string(from: date)
+    }
+    
+    private func closeTender() {
+        tender.status = .closed
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error closing tender: \(error)")
+        }
+    }
+    
+    private func deleteTender() {
+        modelContext.delete(tender)
+        do {
+            try modelContext.save()
+            dismiss()
+        } catch {
+            print("Error deleting tender: \(error)")
+        }
     }
 }
 
