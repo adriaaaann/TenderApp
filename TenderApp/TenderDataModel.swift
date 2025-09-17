@@ -63,43 +63,4 @@ enum TenderStatus: String, CaseIterable, Codable {
     }
 }
 
-extension TenderData {
-    static let sampleData: [TenderData] = [
-        TenderData(
-            title: "Website Development",
-            category: "Technology",
-            location: "New York",
-            deadline: "15/10/2025",
-            minimumBudget: "5000",
-            maximumBudget: "10000",
-            projectDescription: "We need a modern, responsive website for our business",
-            requirements: "Experience with React, Node.js, and modern web technologies",
-            status: .active,
-            applicationsCount: 12
-        ),
-        TenderData(
-            title: "Office Renovation",
-            category: "Construction",
-            location: "San Francisco",
-            deadline: "30/09/2025",
-            minimumBudget: "15000",
-            maximumBudget: "25000",
-            projectDescription: "Complete renovation of our office space including interior design",
-            requirements: "Licensed contractors with portfolio of commercial projects",
-            status: .active,
-            applicationsCount: 8
-        ),
-        TenderData(
-            title: "Marketing Campaign",
-            category: "Marketing",
-            location: "Remote",
-            deadline: "01/11/2025",
-            minimumBudget: "3000",
-            maximumBudget: "7000",
-            projectDescription: "Digital marketing campaign for product launch",
-            requirements: "Experience with social media marketing and content creation",
-            status: .pending,
-            applicationsCount: 5
-        )
-    ]
-}
+

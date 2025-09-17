@@ -5,6 +5,7 @@ struct SignInView: View {
     @State private var password = ""
     @State private var selectedUserType: UserType = .vendor
     @State private var showingOrganizationDashboard = false
+    @State private var showingVendorDashboard = false
     @Environment(\.presentationMode) var presentationMode
     
     enum UserType: String, CaseIterable {
@@ -68,13 +69,16 @@ struct SignInView: View {
         .fullScreenCover(isPresented: $showingOrganizationDashboard) {
             OrganizationDashboardView()
         }
+        .fullScreenCover(isPresented: $showingVendorDashboard) {
+            VendorDashboardView()
+        }
     }
     
     private func handleSignIn() {
         if selectedUserType == .organization {
             showingOrganizationDashboard = true
-        } else {
-            print("Signing in as \(selectedUserType.rawValue) with email: \(email)")
+        } else if selectedUserType == .vendor {
+            showingVendorDashboard = true
         }
     }
 }

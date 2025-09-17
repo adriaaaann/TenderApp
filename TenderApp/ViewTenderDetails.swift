@@ -6,26 +6,25 @@ struct ViewTenderDetails: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 32) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(tender.title)
-                                    .font(.system(size: 28, weight: .bold))
-                                    .foregroundColor(AppColors.primaryText)
-                                    .multilineTextAlignment(.leading)
-                                
-                                Text("Tender Details")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(AppColors.secondaryText)
-                            }
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 32) {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(tender.title)
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundColor(AppColors.primaryText)
+                                .multilineTextAlignment(.leading)
                             
-                            Spacer()
-                            
-                            StatusBadge(text: tender.status.rawValue.capitalized)
+                            Text("Tender Details")
+                                .font(.system(size: 16))
+                                .foregroundColor(AppColors.secondaryText)
                         }
+                        
+                        Spacer()
+                        
+                        StatusBadge(text: tender.status.rawValue.capitalized)
+                    }
                         
                         HStack(spacing: 16) {
                             InfoChip(icon: "calendar", text: "Due: \(tender.deadline)")
@@ -115,31 +114,29 @@ struct ViewTenderDetails: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 8)
             }
-            .background(AppColors.background)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(AppColors.primaryText)
-                    }
+        .background(AppColors.background)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(AppColors.primaryText)
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(AppColors.primary)
-                    }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    
+                }) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(AppColors.primary)
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -288,18 +285,4 @@ struct InfoRow: View {
     }
 }
 
-#Preview {
-    let sampleTender = TenderData(
-        title: "Mobile App Development",
-        category: "Technology",
-        location: "New York",
-        deadline: "2025-10-15",
-        minimumBudget: "50000",
-        maximumBudget: "100000",
-        projectDescription: "We need a comprehensive mobile application for iOS and Android platforms. The app should include user authentication, real-time messaging, and payment integration.",
-        requirements: "- iOS and Android development\n- React Native or Flutter preferred\n- Experience with payment gateways\n- Real-time messaging implementation\n- Clean and modern UI/UX design",
-        status: .active
-    )
-    
-    ViewTenderDetails(tender: sampleTender)
-}
+
