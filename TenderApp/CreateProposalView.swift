@@ -674,14 +674,14 @@ struct ExistingProposalView: View {
 
 #Preview {
     CreateProposalView(tender: TenderData(
-        title: "Mobile App Development",
-        category: "IT Services",
-        location: "New York, NY",
-        deadline: "30/10/2025",
-        minimumBudget: "50000",
-        maximumBudget: "75000",
-        projectDescription: "We are looking for a skilled mobile app development team to create a cross-platform mobile application for our business.",
-        requirements: "Experience with React Native or Flutter, portfolio of previous mobile apps, ability to integrate with REST APIs."
+        title: "",
+        category: "",
+        location: "",
+        deadline: "",
+        minimumBudget: "",
+        maximumBudget: "",
+        projectDescription: "",
+        requirements: ""
     ))
     .environment(AuthenticationService())
     .modelContainer(for: [TenderData.self, User.self, ProposalData.self], inMemory: true)

@@ -363,6 +363,19 @@ struct TenderCard: View {
 struct StatusBadge: View {
     let text: String
     
+    private var badgeColor: Color {
+        switch text.lowercased() {
+        case "pending":
+            return Color.gray
+        case "accepted":
+            return AppColors.success
+        case "rejected":
+            return AppColors.error
+        default:
+            return AppColors.success
+        }
+    }
+    
     var body: some View {
         Text(text)
             .font(.system(size: 11, weight: .semibold))
@@ -371,7 +384,7 @@ struct StatusBadge: View {
             .padding(.vertical, 6)
             .background(
                 LinearGradient(
-                    gradient: Gradient(colors: [AppColors.success, AppColors.success.opacity(0.8)]),
+                    gradient: Gradient(colors: [badgeColor, badgeColor.opacity(0.8)]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
