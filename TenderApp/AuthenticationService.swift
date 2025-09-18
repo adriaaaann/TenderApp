@@ -16,13 +16,13 @@ class AuthenticationService {
         self.modelContext = context
     }
     
-    // Sign Up Function
+  
     func signUp(fullName: String, email: String, password: String, role: UserRole, companyName: String?) -> AuthResult {
         guard let context = modelContext else {
             return .failure("Database not available")
         }
         
-        // Validate input
+       
         guard !fullName.isEmpty, !email.isEmpty, !password.isEmpty else {
             return .failure("Please fill in all required fields")
         }
@@ -35,12 +35,12 @@ class AuthenticationService {
             return .failure("Password must be at least 6 characters long")
         }
         
-        // For vendors, company name is required
+        
         if role == .vendor && (companyName?.isEmpty ?? true) {
             return .failure("Company name is required for vendors")
         }
         
-        // Check if user already exists
+        
         let lowercaseEmail = email.lowercased()
         let descriptor = FetchDescriptor<User>(
             predicate: #Predicate<User> { user in
@@ -58,7 +58,7 @@ class AuthenticationService {
             let newUser = User(
                 email: email.lowercased(),
                 fullName: fullName,
-                password: password, // In production, hash this password
+                password: password,
                 role: role,
                 companyName: companyName
             )
@@ -66,8 +66,7 @@ class AuthenticationService {
             context.insert(newUser)
             try context.save()
             
-            // Do not set as current user - require explicit sign in
-            // self.currentUser = newUser
+           
             
             return .success("Account created successfully! Please sign in to continue.")
             
@@ -76,18 +75,18 @@ class AuthenticationService {
         }
     }
     
-    // Sign In Function
+
     func signIn(email: String, password: String, role: UserRole) -> AuthResult {
         guard let context = modelContext else {
             return .failure("Database not available")
         }
         
-        // Validate input
+     
         guard !email.isEmpty, !password.isEmpty else {
             return .failure("Please enter email and password")
         }
         
-        // Find user with matching email first
+    
         let lowercaseEmail = email.lowercased()
         let descriptor = FetchDescriptor<User>(
             predicate: #Predicate<User> { user in
@@ -98,19 +97,19 @@ class AuthenticationService {
         do {
             let users = try context.fetch(descriptor)
             
-            // Filter by role in Swift since SwiftData predicates can be tricky with enums
+         
             let matchingUsers = users.filter { $0.role == role }
             
             guard let user = matchingUsers.first else {
                 return .failure("No account found with this email and role")
             }
             
-            // Check password (in production, compare hashed passwords)
+     
             guard user.password == password else {
                 return .failure("Incorrect password")
             }
             
-            // Set as current user
+        
             self.currentUser = user
             
             return .success("Signed in successfully")
@@ -120,12 +119,12 @@ class AuthenticationService {
         }
     }
     
-    // Sign Out Function
+   
     func signOut() {
         self.currentUser = nil
     }
     
-    // Helper function to validate email
+    
     private func isValidEmail(_ email: String) -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)

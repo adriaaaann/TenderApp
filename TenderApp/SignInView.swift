@@ -22,7 +22,7 @@ struct SignInView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header
+                
                 HStack {
                     Button("Back") {
                         dismiss()
@@ -35,10 +35,10 @@ struct SignInView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 10)
                 
-                // Main Content
+                
                 ScrollView {
                     VStack(spacing: 32) {
-                        // Title Section
+                        
                         VStack(spacing: 8) {
                             Text("Welcome Back")
                                 .font(.system(size: 36, weight: .bold))
@@ -50,9 +50,9 @@ struct SignInView: View {
                         }
                         .padding(.top, 20)
                         
-                        // Form Fields
+                        
                         VStack(spacing: 24) {
-                            // Role Field
+                        
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Role")
                                     .font(.system(size: 16, weight: .medium))
@@ -89,7 +89,7 @@ struct SignInView: View {
                                 }
                             }
                             
-                            // Email Field
+                            
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Email")
                                     .font(.system(size: 16, weight: .medium))
@@ -105,7 +105,7 @@ struct SignInView: View {
                                     .font(.system(size: 16))
                             }
                             
-                            // Password Field
+                            
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Password")
                                     .font(.system(size: 16, weight: .medium))
@@ -121,7 +121,7 @@ struct SignInView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // Sign In Button and Options
+                        
                         VStack(spacing: 16) {
                             Button(action: {
                                 handleSignIn()
@@ -145,7 +145,7 @@ struct SignInView: View {
                             .disabled(isLoading)
                             .padding(.horizontal, 20)
                             
-                            // Alternative Options
+                            
                             VStack(spacing: 16) {
                                 HStack {
                                     Rectangle()
@@ -164,7 +164,7 @@ struct SignInView: View {
                                 .padding(.horizontal, 20)
                                 
                                 Button(action: {
-                                    // Handle Face ID sign in
+                                    
                                 }) {
                                     HStack {
                                         Image(systemName: "faceid")
@@ -181,13 +181,13 @@ struct SignInView: View {
                                 .padding(.horizontal, 20)
                                 
                                 Button("Forgot your password?") {
-                                    // Handle forgot password
+                                    
                                 }
                                 .foregroundColor(.blue)
                                 .font(.system(size: 16))
                             }
                             
-                            // Sign Up Link
+                            
                             HStack {
                                 Text("dont have an account ? ")
                                     .foregroundColor(.gray)
@@ -227,16 +227,16 @@ struct SignInView: View {
     private func handleSignIn() {
         isLoading = true
         
-        // Convert selected user type to UserRole
+        
         let userRole: UserRole = selectedUserType == .organization ? .organization : .vendor
         
-        // Call authentication service
+        
         let result = authService.signIn(email: email, password: password, role: userRole)
         
         isLoading = false
         
         if result.isSuccess {
-            // Navigate based on user type
+         
             if selectedUserType == .organization {
                 showingOrganizationDashboard = true
             } else {

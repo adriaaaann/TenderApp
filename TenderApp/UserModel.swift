@@ -5,7 +5,7 @@ import Foundation
 class User {
     @Attribute(.unique) var email: String
     var fullName: String
-    var password: String // In production, this should be hashed
+    var password: String 
     var role: UserRole
     var companyName: String?
     var createdAt: Date

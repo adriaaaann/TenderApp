@@ -80,7 +80,7 @@ struct ViewTenderDetails: View {
                     if tender.status == .active {
                         VStack(spacing: 12) {
                             if isOrganizationView {
-                                // Organization view - show Manage Tender button
+                           
                                 Button(action: {
                                     showingManageOptions = true
                                 }) {
@@ -99,7 +99,7 @@ struct ViewTenderDetails: View {
                                     )
                                 }
                             } else {
-                                // Vendor view - show Submit Proposal button
+                         
                                 Button(action: {
                                     
                                 }) {

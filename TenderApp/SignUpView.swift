@@ -18,7 +18,7 @@ struct SignUpView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header
+         
                 HStack {
                     Button("Back") {
                         dismiss()
@@ -31,10 +31,10 @@ struct SignUpView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 10)
                 
-                // Main Content
+           
                 ScrollView {
                     VStack(spacing: 32) {
-                        // Title Section
+               
                         VStack(spacing: 8) {
                             Text("Create Account")
                                 .font(.system(size: 36, weight: .bold))
@@ -46,9 +46,9 @@ struct SignUpView: View {
                         }
                         .padding(.top, 20)
                         
-                        // Form Fields
+                      
                         VStack(spacing: 24) {
-                            // Full Name Field
+                    
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Full Name")
                                     .font(.system(size: 16, weight: .medium))
@@ -62,7 +62,7 @@ struct SignUpView: View {
                                     .font(.system(size: 16))
                             }
                             
-                            // Email Field
+                         
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Email")
                                     .font(.system(size: 16, weight: .medium))
@@ -78,7 +78,7 @@ struct SignUpView: View {
                                     .font(.system(size: 16))
                             }
                             
-                            // Role Field
+                          
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Role")
                                     .font(.system(size: 16, weight: .medium))
@@ -115,7 +115,7 @@ struct SignUpView: View {
                                 }
                             }
                             
-                            // Company Name Field (only for Vendors)
+                            
                             if selectedRole == "Vendor" {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Company Name")
@@ -133,7 +133,7 @@ struct SignUpView: View {
                                 .animation(.easeInOut(duration: 0.3), value: selectedRole)
                             }
                             
-                            // Password Field
+                          
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Password")
                                     .font(.system(size: 16, weight: .medium))
@@ -149,7 +149,7 @@ struct SignUpView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // Sign Up Button
+       
                         VStack(spacing: 16) {
                             Button(action: {
                                 handleSignUp()
@@ -173,7 +173,7 @@ struct SignUpView: View {
                             .disabled(isLoading)
                             .padding(.horizontal, 20)
                             
-                            // Sign In Link
+                         
                             HStack {
                                 Text("Already have an account?")
                                     .foregroundColor(.gray)
@@ -204,7 +204,7 @@ struct SignUpView: View {
     private func handleSignUp() {
         isLoading = true
         
-        // Convert selected role string to UserRole enum
+       
         let userRole: UserRole
         switch selectedRole {
         case "Organization":
@@ -218,7 +218,7 @@ struct SignUpView: View {
             return
         }
         
-        // Call authentication service
+   
         let result = authService.signUp(
             fullName: fullName,
             email: email,
@@ -231,7 +231,7 @@ struct SignUpView: View {
         alertMessage = result.message
         showAlert = true
         
-        // If successful, dismiss the view
+      
         if result.isSuccess {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 dismiss()
