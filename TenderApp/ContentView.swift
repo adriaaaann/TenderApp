@@ -326,12 +326,12 @@ struct ModernSignInPrompt: View {
     
     var body: some View {
         HStack {
-            Text("Already have an account?")
+            Text("Don't have an account?")
                 .font(AppFonts.bodyMedium)
                 .foregroundColor(AppColors.secondaryText)
             
             Button(action: action) {
-                Text("Sign In")
+                Text("Sign Up")
                     .font(AppFonts.buttonMedium)
                     .foregroundColor(AppColors.primary)
             }
@@ -365,6 +365,7 @@ struct WelcomeHeader: View {
 struct WelcomeActions: View {
     let onGetStarted: () -> Void
     let onSignIn: () -> Void
+    let onSignUp: () -> Void
     
     @State private var animateButtons = false
     
@@ -380,7 +381,7 @@ struct WelcomeActions: View {
             .opacity(animateButtons ? 1.0 : 0.0)
             .animation(.spring(response: 0.8, dampingFraction: 0.7, blendDuration: 0).delay(0.6), value: animateButtons)
             
-            ModernSignInPrompt(action: onSignIn)
+            ModernSignInPrompt(action: onSignUp)
                 .offset(y: animateButtons ? 0 : 20)
                 .opacity(animateButtons ? 1.0 : 0.0)
                 .animation(.spring(response: 0.8, dampingFraction: 0.7, blendDuration: 0).delay(0.8), value: animateButtons)
@@ -394,8 +395,26 @@ struct WelcomeActions: View {
 
 struct ContentView: View {
     @State private var showingSignIn = false
+    @State private var showingSignUp = false
+    @Environment(AuthenticationService.self) private var authService
     
     var body: some View {
+        Group {
+            if authService.isAuthenticated {
+                // Show appropriate dashboard based on user role
+                if authService.currentUser?.role == .organization {
+                    OrganizationDashboardView()
+                } else {
+                    VendorDashboardView()
+                }
+            } else {
+                
+                welcomeView
+            }
+        }
+    }
+    
+    private var welcomeView: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
@@ -428,7 +447,8 @@ struct ContentView: View {
                         
                         WelcomeActions(
                             onGetStarted: handleGetStarted,
-                            onSignIn: handleSignIn
+                            onSignIn: handleSignIn,
+                            onSignUp: handleSignUp
                         )
                         
                         Spacer(minLength: AppSpacing.xl)
@@ -438,6 +458,11 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingSignIn) {
                 SignInView()
+                    .environment(authService)
+            }
+            .sheet(isPresented: $showingSignUp) {
+                SignUpView()
+                    .environment(authService)
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -450,8 +475,13 @@ struct ContentView: View {
     private func handleSignIn() {
         showingSignIn = true
     }
+    
+    private func handleSignUp() {
+        showingSignUp = true
+    }
 }
 
 #Preview {
     ContentView()
+        .environment(AuthenticationService())
 }

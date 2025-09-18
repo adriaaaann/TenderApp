@@ -8,7 +8,11 @@ struct SignInView: View {
     @State private var showingVendorDashboard = false
     @State private var showingSignUp = false
     @State private var showingRolePicker = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isLoading = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthenticationService.self) private var authService
     
     enum UserType: String, CaseIterable {
         case vendor = "Vendor"
@@ -122,14 +126,23 @@ struct SignInView: View {
                             Button(action: {
                                 handleSignIn()
                             }) {
-                                Text("Sign In")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 16)
-                                    .background(Color.blue)
-                                    .cornerRadius(12)
+                                HStack {
+                                    if isLoading {
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                            .scaleEffect(0.8)
+                                    } else {
+                                        Text("Sign Up")
+                                            .font(.system(size: 18, weight: .semibold))
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(isLoading ? Color.blue.opacity(0.7) : Color.blue)
+                                .cornerRadius(12)
                             }
+                            .disabled(isLoading)
                             .padding(.horizontal, 20)
                             
                             // Alternative Options
@@ -176,11 +189,11 @@ struct SignInView: View {
                             
                             // Sign Up Link
                             HStack {
-                                Text("Don't have an account?")
+                                Text("dont have an account ? ")
                                     .foregroundColor(.gray)
                                     .font(.system(size: 16))
                                 
-                                Button("Sign Up") {
+                                Button("Sign up") {
                                     showingSignUp = true
                                 }
                                 .foregroundColor(.blue)
@@ -204,31 +217,39 @@ struct SignInView: View {
         .sheet(isPresented: $showingSignUp) {
             SignUpView()
         }
+        .alert("Sign In", isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
+        }
     }
     
-    
     private func handleSignIn() {
-        // Validate form
-        guard !email.isEmpty, !password.isEmpty else {
-            // Show error message
-            return
-        }
+        isLoading = true
         
-        // TODO: Implement actual authentication logic
-        print("Sign in with:")
-        print("Role: \(selectedUserType.rawValue)")
-        print("Email: \(email)")
-        print("Password: [HIDDEN]")
+        // Convert selected user type to UserRole
+        let userRole: UserRole = selectedUserType == .organization ? .organization : .vendor
         
-        // Navigate based on user type
-        if selectedUserType == .organization {
-            showingOrganizationDashboard = true
-        } else if selectedUserType == .vendor {
-            showingVendorDashboard = true
+        // Call authentication service
+        let result = authService.signIn(email: email, password: password, role: userRole)
+        
+        isLoading = false
+        
+        if result.isSuccess {
+            // Navigate based on user type
+            if selectedUserType == .organization {
+                showingOrganizationDashboard = true
+            } else {
+                showingVendorDashboard = true
+            }
+        } else {
+            alertMessage = result.message
+            showAlert = true
         }
     }
 }
 
 #Preview {
     SignInView()
+        .environment(AuthenticationService())
 }

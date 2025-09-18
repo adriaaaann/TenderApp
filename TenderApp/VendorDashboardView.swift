@@ -3,6 +3,7 @@ import SwiftData
 
 struct VendorDashboardView: View {
     @Query(sort: \TenderData.dateCreated, order: .reverse) private var allTenders: [TenderData]
+    @Environment(AuthenticationService.self) private var authService
     
     private var openTenders: [TenderData] {
         allTenders.filter { $0.status == .active }
@@ -89,6 +90,8 @@ struct VendorDashboardView: View {
 }
 
 struct VendorHeaderSection: View {
+    @Environment(AuthenticationService.self) private var authService
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -97,14 +100,24 @@ struct VendorHeaderSection: View {
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(AppColors.primaryText)
                     
-                    Text("Browse Open Tenders")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(AppColors.secondaryText)
+                    if let user = authService.currentUser, let company = user.companyName {
+                        Text(company)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(AppColors.secondaryText)
+                    } else {
+                        Text("Browse Open Tenders")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(AppColors.secondaryText)
+                    }
                 }
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Menu {
+                    Button("Sign Out", action: {
+                        authService.signOut()
+                    })
+                } label: {
                     ZStack {
                         Circle()
                             .fill(
@@ -116,9 +129,16 @@ struct VendorHeaderSection: View {
                             )
                             .frame(width: 44, height: 44)
                         
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white)
+                        if let user = authService.currentUser {
+                            let initials = String(user.fullName.prefix(2)).uppercased()
+                            Text(initials)
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                        } else {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 18))
+                                .foregroundColor(.white)
+                        }
                     }
                     .shadow(color: Color.blue.opacity(0.3), radius: 4, x: 0, y: 2)
                 }

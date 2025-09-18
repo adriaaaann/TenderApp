@@ -7,7 +7,11 @@ struct SignUpView: View {
     @State private var selectedRole = ""
     @State private var companyName = ""
     @State private var showingRolePicker = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isLoading = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthenticationService.self) private var authService
     
     let roles = ["Organization", "Vendor"]
     
@@ -148,17 +152,25 @@ struct SignUpView: View {
                         // Sign Up Button
                         VStack(spacing: 16) {
                             Button(action: {
-                                // Handle sign up action
                                 handleSignUp()
                             }) {
-                                Text("Sign Up")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 16)
-                                    .background(Color.blue)
-                                    .cornerRadius(12)
+                                HStack {
+                                    if isLoading {
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                            .scaleEffect(0.8)
+                                    } else {
+                                        Text("Sign Up")
+                                            .font(.system(size: 18, weight: .semibold))
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(isLoading ? Color.blue.opacity(0.7) : Color.blue)
+                                .cornerRadius(12)
                             }
+                            .disabled(isLoading)
                             .padding(.horizontal, 20)
                             
                             // Sign In Link
@@ -182,39 +194,53 @@ struct SignUpView: View {
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .alert("Sign Up", isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
+        }
     }
     
     private func handleSignUp() {
-        // Validate form
-        guard !fullName.isEmpty,
-              !email.isEmpty,
-              !selectedRole.isEmpty,
-              !password.isEmpty else {
-            // Show error message
+        isLoading = true
+        
+        // Convert selected role string to UserRole enum
+        let userRole: UserRole
+        switch selectedRole {
+        case "Organization":
+            userRole = .organization
+        case "Vendor":
+            userRole = .vendor
+        default:
+            alertMessage = "Please select a valid role"
+            showAlert = true
+            isLoading = false
             return
         }
         
-        // Additional validation for vendors
-        if selectedRole == "Vendor" && companyName.isEmpty {
-            // Show error message for missing company name
-            return
-        }
+        // Call authentication service
+        let result = authService.signUp(
+            fullName: fullName,
+            email: email,
+            password: password,
+            role: userRole,
+            companyName: selectedRole == "Vendor" ? companyName : nil
+        )
         
-        // TODO: Implement actual sign up logic
-        print("Sign up with:")
-        print("Full Name: \(fullName)")
-        print("Email: \(email)")
-        print("Role: \(selectedRole)")
-        if selectedRole == "Vendor" {
-            print("Company: \(companyName)")
-        }
-        print("Password: [HIDDEN]")
+        isLoading = false
+        alertMessage = result.message
+        showAlert = true
         
-        // For now, just dismiss the view
-        dismiss()
+        // If successful, dismiss the view
+        if result.isSuccess {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                dismiss()
+            }
+        }
     }
 }
 
 #Preview {
     SignUpView()
+        .environment(AuthenticationService())
 }

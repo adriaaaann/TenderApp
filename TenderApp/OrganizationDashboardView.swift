@@ -4,6 +4,7 @@ import SwiftData
 struct OrganizationDashboardView: View {
     @State private var selectedTender: TenderData?
     @State private var showingTenderDetails = false
+    @Environment(AuthenticationService.self) private var authService
     
     var body: some View {
         ZStack {
@@ -42,6 +43,8 @@ struct OrganizationDashboardView: View {
 }
 
 struct HeaderSection: View {
+    @Environment(AuthenticationService.self) private var authService
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -50,14 +53,18 @@ struct HeaderSection: View {
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(AppColors.primaryText)
                     
-                    Text("Finance Bank")
+                    Text(authService.currentUser?.fullName ?? "Organization")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(AppColors.secondaryText)
                 }
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Menu {
+                    Button("Sign Out", action: {
+                        authService.signOut()
+                    })
+                } label: {
                     ZStack {
                         Circle()
                             .fill(
@@ -69,9 +76,16 @@ struct HeaderSection: View {
                             )
                             .frame(width: 44, height: 44)
                         
-                        Text("FB")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
+                        if let user = authService.currentUser {
+                            let initials = String(user.fullName.prefix(2)).uppercased()
+                            Text(initials)
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                        } else {
+                            Text("ORG")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
                     }
                     .shadow(color: AppColors.primary.opacity(0.3), radius: 4, x: 0, y: 2)
                 }

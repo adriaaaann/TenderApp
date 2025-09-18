@@ -3,9 +3,12 @@ import SwiftData
 
 @main
 struct TenderAppApp: App {
+    @State private var authService = AuthenticationService()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             TenderData.self,
+            User.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -76,6 +79,10 @@ struct TenderAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(authService)
+                .onAppear {
+                    authService.setModelContext(sharedModelContainer.mainContext)
+                }
         }
         .modelContainer(sharedModelContainer)
     }
