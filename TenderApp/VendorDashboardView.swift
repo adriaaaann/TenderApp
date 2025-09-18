@@ -16,7 +16,7 @@ struct VendorDashboardView: View {
     @State private var searchText = ""
     @State private var selectedCategory = "All"
     
-    private let categories = ["All", "Construction", "IT Services", "Consulting", "Manufacturing", "Transportation", "Healthcare", "Education", "Finance", "Other"]
+    private let categories = ["All", "Consulting", "IT Services", "Procurement"]
     
     private var filteredTenders: [TenderData] {
         var filtered = openTenders

@@ -151,14 +151,14 @@ struct EditTenderView: View {
 
 #Preview {
     EditTenderView(tender: TenderData(
-        title: "Sample Tender",
-        category: "Technology",
-        location: "Remote",
-        deadline: "31/12/2024",
-        minimumBudget: "5000",
-        maximumBudget: "10000",
-        projectDescription: "Sample description",
-        requirements: "Sample requirements",
+        title: "",
+        category: "",
+        location: "",
+        deadline: "",
+        minimumBudget: "",
+        maximumBudget: "",
+        projectDescription: "",
+        requirements: "",
         status: .active
     ))
     .environment(AuthenticationService())
