@@ -212,7 +212,7 @@ struct SignInView: View {
             OrganizationDashboardView()
         }
         .fullScreenCover(isPresented: $showingVendorDashboard) {
-            VendorDashboardView()
+            VendorMainView()
         }
         .sheet(isPresented: $showingSignUp) {
             SignUpView()

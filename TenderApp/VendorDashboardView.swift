@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct VendorDashboardView: View {
+    @Binding var selectedTab: Int
     @Query(sort: \TenderData.dateCreated, order: .reverse) private var allTenders: [TenderData]
     @Environment(AuthenticationService.self) private var authService
     
@@ -45,8 +46,6 @@ struct VendorDashboardView: View {
                     VStack(spacing: 28) {
                         VendorHeaderSection()
                         
-                        VendorProposalsSection()
-                        
                         SearchAndFilterSection(
                             searchText: $searchText,
                             selectedCategory: $selectedCategory,
@@ -74,7 +73,7 @@ struct VendorDashboardView: View {
                     .padding(.top, 20)
                 }
                 
-                VendorBottomTabBar()
+                VendorBottomTabBar(selectedTab: $selectedTab)
             }
         }
         .navigationBarHidden(true)
@@ -422,6 +421,8 @@ struct EmptyTendersView: View {
 }
 
 struct VendorBottomTabBar: View {
+    @Binding var selectedTab: Int
+    
     var body: some View {
         ZStack {
             Rectangle()
@@ -433,25 +434,29 @@ struct VendorBottomTabBar: View {
                 VendorTabButton(
                     icon: "house.fill",
                     title: "Browse",
-                    isSelected: true
+                    isSelected: selectedTab == 0,
+                    action: { selectedTab = 0 }
                 )
                 
                 VendorTabButton(
                     icon: "doc.text",
                     title: "My Bids",
-                    isSelected: false
+                    isSelected: selectedTab == 1,
+                    action: { selectedTab = 1 }
                 )
                 
                 VendorTabButton(
                     icon: "bell",
                     title: "Notifications",
-                    isSelected: false
+                    isSelected: selectedTab == 2,
+                    action: { selectedTab = 2 }
                 )
                 
                 VendorTabButton(
                     icon: "person",
                     title: "Profile",
-                    isSelected: false
+                    isSelected: selectedTab == 3,
+                    action: { selectedTab = 3 }
                 )
             }
             .padding(.horizontal, 20)
@@ -465,9 +470,10 @@ struct VendorTabButton: View {
     let icon: String
     let title: String
     let isSelected: Bool
+    let action: () -> Void
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             VStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: isSelected ? .semibold : .medium))
@@ -731,7 +737,7 @@ struct DetailRow: View {
 }
 
 #Preview {
-    VendorDashboardView()
+    VendorMainView()
         .environment(AuthenticationService())
         .modelContainer(for: [TenderData.self, User.self, ProposalData.self], inMemory: true)
 }

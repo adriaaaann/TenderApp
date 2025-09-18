@@ -423,7 +423,7 @@ struct ContentView: View {
                     if currentUser.role == .organization {
                         OrganizationDashboardView()
                     } else {
-                        VendorDashboardView()
+                        VendorMainView()
                     }
                 } else {
                     welcomeView
