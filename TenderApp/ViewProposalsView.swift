@@ -247,6 +247,8 @@ struct MinimalStatusBadge: View {
     
     var statusColor: Color {
         switch status {
+        case .pending:
+            return AppColors.secondaryText
         case .submitted:
             return AppColors.accent
         case .underReview:
@@ -501,6 +503,30 @@ struct ProposalAttachmentsView: View {
 struct MinimalProposalDetailView: View {
     let proposal: ProposalData
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.modelContext) private var modelContext
+    @State private var selectedStatus: ProposalStatus
+    
+    init(proposal: ProposalData) {
+        self.proposal = proposal
+        self._selectedStatus = State(initialValue: .pending)
+    }
+    
+    var statusBackgroundColor: Color {
+        switch selectedStatus {
+        case .pending:
+            return Color.gray
+        case .submitted:
+            return Color.blue
+        case .underReview:
+            return Color.orange
+        case .accepted:
+            return Color.green
+        case .rejected:
+            return Color.red
+        case .withdrawn:
+            return Color.gray
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -528,7 +554,45 @@ struct MinimalProposalDetailView: View {
                         }
                         
                         HStack {
-                            MinimalStatusBadge(status: proposal.status)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Status")
+                                    .font(AppFonts.overline)
+                                    .foregroundColor(AppColors.secondaryText)
+                                    .textCase(.uppercase)
+                                
+                                Menu {
+                                    let allowedStatuses: [ProposalStatus] = [.pending, .accepted, .rejected]
+                                    ForEach(allowedStatuses, id: \.self) { status in
+                                        Button(action: {
+                                            selectedStatus = status
+                                            updateProposalStatus()
+                                        }) {
+                                            HStack {
+                                                Text(status.rawValue.capitalized)
+                                                if status == selectedStatus {
+                                                    Image(systemName: "checkmark")
+                                                        .foregroundColor(.blue)
+                                                }
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Text(selectedStatus.rawValue.capitalized)
+                                            .font(AppFonts.bodyMedium)
+                                            .fontWeight(.semibold)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(statusBackgroundColor.opacity(0.15))
+                                            .foregroundColor(statusBackgroundColor)
+                                            .cornerRadius(12)
+                                        
+                                        Image(systemName: "chevron.down")
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(AppColors.primaryText)
+                                    }
+                                }
+                            }
                             
                             Spacer()
                             
@@ -638,6 +702,30 @@ struct MinimalProposalDetailView: View {
             }
             .background(AppColors.surfaceBackground)
             .navigationBarHidden(true)
+            .onAppear {
+                // Set status to pending when view appears
+                selectedStatus = .pending
+                proposal.status = .pending
+                do {
+                    try modelContext.save()
+                } catch {
+                    print("Failed to initialize proposal status: \(error)")
+                }
+            }
+        }
+    }
+    
+    private func updateProposalStatus() {
+        // Update the proposal's status in the database
+        proposal.status = selectedStatus
+        
+        do {
+            try modelContext.save()
+            print("Successfully updated proposal status to: \(selectedStatus.rawValue)")
+        } catch {
+            print("Failed to update proposal status: \(error)")
+            // Revert the selectedStatus if save failed
+            selectedStatus = proposal.status
         }
     }
 }

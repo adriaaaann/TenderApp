@@ -55,6 +55,7 @@ class ProposalData {
 }
 
 enum ProposalStatus: String, CaseIterable, Codable {
+    case pending = "Pending"
     case submitted = "Submitted"
     case underReview = "Under Review"
     case accepted = "Accepted"
@@ -63,6 +64,8 @@ enum ProposalStatus: String, CaseIterable, Codable {
     
     var color: String {
         switch self {
+        case .pending:
+            return "gray"
         case .submitted:
             return "blue"
         case .underReview:
