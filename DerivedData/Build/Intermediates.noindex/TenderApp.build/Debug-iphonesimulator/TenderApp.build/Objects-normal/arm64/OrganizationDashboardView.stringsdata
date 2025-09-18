@@ -1,0 +1,120 @@
+{
+  "source": "/Users/akshvinth019/Dev/TenderApp/TenderApp/OrganizationDashboardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Organization Portal",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign Out",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 64
+        }
+      },
+      {
+        "comment": "",
+        "key": "ORG",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dashboard Overview",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "My Tenders",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 169
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create New",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 174
+        }
+      },
+      {
+        "comment": "",
+        "key": "No tenders yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 188
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create your first tender to get started",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 192
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Tender",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "View All (%lld)",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 225
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld proposals",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 263
+        }
+      },
+      {
+        "comment": "",
+        "key": "$%@ - $%@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 297
+        }
+      },
+      {
+        "comment": "",
+        "key": "View Details",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 304
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manage",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 319
+        }
+      }
+    ]
+  },
+  "version": 1
+}

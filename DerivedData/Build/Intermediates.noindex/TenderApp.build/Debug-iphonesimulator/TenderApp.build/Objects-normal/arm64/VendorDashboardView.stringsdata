@@ -1,0 +1,136 @@
+{
+  "source": "/Users/akshvinth019/Dev/TenderApp/TenderApp/VendorDashboardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Vendor Portal",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 99
+        }
+      },
+      {
+        "comment": "",
+        "key": "Browse Open Tenders",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 108
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign Out",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search tenders...",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 169
+        }
+      },
+      {
+        "comment": "",
+        "key": "Open Tenders",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 212
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld Available",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 218
+        }
+      },
+      {
+        "comment": "",
+        "key": "Budget Range",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "$%@ - $%@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 309
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 317
+        }
+      },
+      {
+        "comment": "",
+        "key": "Deadline: %@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 333
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld days left",
+        "location": {
+          "startingColumn": 57,
+          "startingLine": 346
+        }
+      },
+      {
+        "comment": "",
+        "key": "Expired",
+        "location": {
+          "startingColumn": 83,
+          "startingLine": 346
+        }
+      },
+      {
+        "comment": "",
+        "key": "View Details",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 370
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submit Proposal",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 383
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Open Tenders",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 408
+        }
+      },
+      {
+        "comment": "",
+        "key": "There are currently no open tenders matching your criteria. Check back later for new opportunities.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 412
+        }
+      }
+    ]
+  },
+  "version": 1
+}

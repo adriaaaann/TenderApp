@@ -1,0 +1,72 @@
+{
+  "source": "/Users/akshvinth019/Dev/TenderApp/TenderApp/CreateTenderView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Create Tender",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fill out the details for your new tender",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "Publish Tender",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save as Draft",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "*",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 207
+        }
+      },
+      {
+        "comment": "",
+        "key": "*",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 250
+        }
+      },
+      {
+        "comment": "",
+        "key": "Upload Documents",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 294
+        }
+      },
+      {
+        "comment": "",
+        "key": "PDF, DOC, XLS files supported",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 298
+        }
+      }
+    ]
+  },
+  "version": 1
+}

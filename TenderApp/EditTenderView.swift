@@ -135,6 +135,9 @@ struct EditTenderView: View {
         
         do {
             try modelContext.save()
+            
+            NotificationService.shared.notifyVendorsOfTenderUpdate(tender: tender, modelContext: modelContext)
+            
             dismiss()
         } catch {
             print("Error updating tender: \(error)")

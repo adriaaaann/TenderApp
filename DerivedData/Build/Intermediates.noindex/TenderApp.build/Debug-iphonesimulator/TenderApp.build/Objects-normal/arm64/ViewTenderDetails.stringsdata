@@ -1,0 +1,120 @@
+{
+  "source": "/Users/akshvinth019/Dev/TenderApp/TenderApp/ViewTenderDetails.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Delete Tender",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 192
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tender Details",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manage Tender",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submit Proposal",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save to Favorites",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 129
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manage Tender",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Choose an action for this tender",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 177
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit Tender Details",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close Tender",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 182
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete Tender",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 185
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 194
+        }
+      },
+      {
+        "comment": "",
+        "key": "Are you sure you want to delete this tender? This action cannot be undone.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "$%@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 334
+        }
+      }
+    ]
+  },
+  "version": 1
+}

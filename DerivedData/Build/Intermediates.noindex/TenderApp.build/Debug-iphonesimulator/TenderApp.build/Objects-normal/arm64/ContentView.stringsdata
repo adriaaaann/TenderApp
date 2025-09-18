@@ -1,0 +1,40 @@
+{
+  "source": "/Users/akshvinth019/Dev/TenderApp/TenderApp/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Tender",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connecting Organizations\nwith Vendors",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 315
+        }
+      },
+      {
+        "comment": "",
+        "key": "Don't have an account?",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 329
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign Up",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 334
+        }
+      }
+    ]
+  },
+  "version": 1
+}

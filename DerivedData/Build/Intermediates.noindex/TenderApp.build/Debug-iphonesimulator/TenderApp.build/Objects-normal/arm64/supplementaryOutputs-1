@@ -1,0 +1,18 @@
+"/Users/akshvinth019/Dev/TenderApp/TenderApp/SignInViewNew.swift":
+  const-values: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/SignInViewNew.swiftconstvalues"
+  diagnostics: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/SignInViewNew.dia"
+  dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/SignInViewNew.d"
+  swift-dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/SignInViewNew.swiftdeps"
+  object: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/SignInViewNew.o"
+"/Users/akshvinth019/Dev/TenderApp/TenderApp/TenderDataModel.swift":
+  const-values: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/TenderDataModel.swiftconstvalues"
+  diagnostics: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/TenderDataModel.dia"
+  dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/TenderDataModel.d"
+  object: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/TenderDataModel.o"
+  swift-dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/TenderDataModel.swiftdeps"
+"/Users/akshvinth019/Dev/TenderApp/TenderApp/CreateTenderView.swift":
+  dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/CreateTenderView.d"
+  swift-dependencies: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/CreateTenderView.swiftdeps"
+  object: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/CreateTenderView.o"
+  diagnostics: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/CreateTenderView.dia"
+  const-values: "/Users/akshvinth019/Dev/TenderApp/DerivedData/Build/Intermediates.noindex/TenderApp.build/Debug-iphonesimulator/TenderApp.build/Objects-normal/arm64/CreateTenderView.swiftconstvalues"

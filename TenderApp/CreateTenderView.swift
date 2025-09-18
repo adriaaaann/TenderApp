@@ -123,6 +123,9 @@ struct CreateTenderView: View {
         
         do {
             try modelContext.save()
+            
+            NotificationService.shared.notifyVendorsOfNewTender(tender: tender, modelContext: modelContext)
+            
             dismiss()
         } catch {
             print("Error saving tender: \(error)")
