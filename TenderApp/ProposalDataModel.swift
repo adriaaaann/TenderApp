@@ -49,33 +49,24 @@ class ProposalData {
         self.proposalDescription = proposalDescription
         self.experience = experience
         self.attachments = attachments
-        self.status = .submitted
+        self.status = .pending
         self.dateSubmitted = Date()
     }
 }
 
 enum ProposalStatus: String, CaseIterable, Codable {
     case pending = "Pending"
-    case submitted = "Submitted"
-    case underReview = "Under Review"
     case accepted = "Accepted"
     case rejected = "Rejected"
-    case withdrawn = "Withdrawn"
     
     var color: String {
         switch self {
         case .pending:
             return "gray"
-        case .submitted:
-            return "blue"
-        case .underReview:
-            return "orange"
         case .accepted:
             return "green"
         case .rejected:
             return "red"
-        case .withdrawn:
-            return "gray"
         }
     }
 }

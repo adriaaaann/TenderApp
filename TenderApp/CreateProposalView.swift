@@ -611,7 +611,7 @@ struct ExistingProposalView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            // Header
+          
             VStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 50))

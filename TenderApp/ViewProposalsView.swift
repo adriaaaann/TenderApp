@@ -249,16 +249,10 @@ struct MinimalStatusBadge: View {
         switch status {
         case .pending:
             return AppColors.secondaryText
-        case .submitted:
-            return AppColors.accent
-        case .underReview:
-            return AppColors.warning
         case .accepted:
             return AppColors.success
         case .rejected:
             return AppColors.error
-        case .withdrawn:
-            return AppColors.secondaryText
         }
     }
     
@@ -515,16 +509,10 @@ struct MinimalProposalDetailView: View {
         switch selectedStatus {
         case .pending:
             return Color.gray
-        case .submitted:
-            return Color.blue
-        case .underReview:
-            return Color.orange
         case .accepted:
             return Color.green
         case .rejected:
             return Color.red
-        case .withdrawn:
-            return Color.gray
         }
     }
     
