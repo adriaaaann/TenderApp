@@ -45,6 +45,8 @@ struct VendorDashboardView: View {
                     VStack(spacing: 28) {
                         VendorHeaderSection()
                         
+                        VendorProposalsSection()
+                        
                         SearchAndFilterSection(
                             searchText: $searchText,
                             selectedCategory: $selectedCategory,
@@ -480,7 +482,256 @@ struct VendorTabButton: View {
     }
 }
 
+struct VendorProposalsSection: View {
+    @Environment(AuthenticationService.self) private var authService
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allProposals: [ProposalData]
+    @State private var selectedProposal: ProposalData?
+    @State private var showingProposalDetails = false
+    
+    private var myProposals: [ProposalData] {
+        guard let currentUser = authService.currentUser else { return [] }
+        return allProposals.filter { $0.vendorEmail == currentUser.email }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("My Proposals")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(AppColors.primaryText)
+                
+                Spacer()
+                
+                Text("\(myProposals.count)")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(AppColors.secondaryText)
+            }
+            .padding(.horizontal, 24)
+            
+            if myProposals.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 40))
+                        .foregroundColor(AppColors.secondaryText.opacity(0.5))
+                    
+                    Text("No Proposals Yet")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(AppColors.primaryText)
+                    
+                    Text("Submit your first proposal to get started")
+                        .font(.system(size: 14))
+                        .foregroundColor(AppColors.secondaryText)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+                .padding(.horizontal, 24)
+                .background(Color.white)
+                .cornerRadius(16)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+                .padding(.horizontal, 24)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 16) {
+                        ForEach(myProposals, id: \.id) { proposal in
+                            VendorProposalCard(
+                                proposal: proposal,
+                                onTap: {
+                                    selectedProposal = proposal
+                                    showingProposalDetails = true
+                                }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                }
+            }
+        }
+        .sheet(isPresented: $showingProposalDetails) {
+            if let proposal = selectedProposal {
+                VendorProposalDetailView(proposal: proposal)
+            }
+        }
+    }
+}
+
+struct VendorProposalCard: View {
+    let proposal: ProposalData
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(proposal.companyName)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(AppColors.primaryText)
+                            .lineLimit(1)
+                        
+                        Text(proposal.proposedBudget)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(AppColors.primary)
+                    }
+                    
+                    Spacer()
+                    
+                    StatusBadge(text: proposal.status.rawValue.capitalized)
+                }
+                
+                Text(proposal.proposalDescription)
+                    .font(.system(size: 14))
+                    .foregroundColor(AppColors.secondaryText)
+                    .lineLimit(2)
+                
+                HStack {
+                    Text("Submitted")
+                        .font(.system(size: 12))
+                        .foregroundColor(AppColors.secondaryText)
+                    
+                    Spacer()
+                    
+                    Text(proposal.dateSubmitted, style: .date)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(AppColors.secondaryText)
+                }
+            }
+            .padding(16)
+            .frame(width: 280, alignment: .leading)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct VendorProposalDetailView: View {
+    let proposal: ProposalData
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Proposal Details")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(AppColors.primaryText)
+                        
+                        HStack {
+                            StatusBadge(text: proposal.status.rawValue.capitalized)
+                            
+                            Spacer()
+                            
+                            Text("Submitted \(proposal.dateSubmitted, style: .date)")
+                                .font(.system(size: 14))
+                                .foregroundColor(AppColors.secondaryText)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Company Information")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(AppColors.primaryText)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            DetailRow(title: "Company", value: proposal.companyName)
+                            DetailRow(title: "Contact Person", value: proposal.contactPerson)
+                            DetailRow(title: "Email", value: proposal.email)
+                            DetailRow(title: "Phone", value: proposal.phone)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Proposal Details")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(AppColors.primaryText)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            DetailRow(title: "Proposal Title", value: proposal.proposalTitle)
+                            DetailRow(title: "Proposed Budget", value: proposal.proposedBudget)
+                            DetailRow(title: "Timeline", value: proposal.timeline)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Description")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(AppColors.primaryText)
+                            
+                            Text(proposal.proposalDescription)
+                                .font(.system(size: 14))
+                                .foregroundColor(AppColors.secondaryText)
+                        }
+                        
+                        if !proposal.experience.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Experience")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(AppColors.primaryText)
+                                
+                                Text(proposal.experience)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(AppColors.secondaryText)
+                            }
+                        }
+                        
+                        if !proposal.attachments.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Attachments")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(AppColors.primaryText)
+                                
+                                Text(proposal.attachments.joined(separator: ", "))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(AppColors.secondaryText)
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(24)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Close") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                    .foregroundColor(AppColors.primary)
+                }
+            }
+        }
+    }
+}
+
+struct DetailRow: View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(AppColors.primaryText)
+                .frame(width: 100, alignment: .leading)
+            
+            Text(value)
+                .font(.system(size: 14))
+                .foregroundColor(AppColors.secondaryText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
 #Preview {
     VendorDashboardView()
-        .modelContainer(for: TenderData.self, inMemory: true)
+        .environment(AuthenticationService())
+        .modelContainer(for: [TenderData.self, User.self, ProposalData.self], inMemory: true)
 }

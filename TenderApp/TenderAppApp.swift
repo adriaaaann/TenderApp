@@ -10,6 +10,7 @@ struct TenderAppApp: App {
         let schema = Schema([
             TenderData.self,
             User.self,
+            ProposalData.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -17,7 +18,16 @@ struct TenderAppApp: App {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
             return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("Model container creation failed, attempting to create new container: \(error)")
+            
+            let tempConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            
+            do {
+                let newContainer = try ModelContainer(for: schema, configurations: [tempConfiguration])
+                return newContainer
+            } catch {
+                fatalError("Could not create ModelContainer even after reset: \(error)")
+            }
         }
     }()
 

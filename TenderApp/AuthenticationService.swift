@@ -54,7 +54,6 @@ class AuthenticationService {
                 return .failure("An account with this email already exists")
             }
             
-            // Create new user
             let newUser = User(
                 email: email.lowercased(),
                 fullName: fullName,

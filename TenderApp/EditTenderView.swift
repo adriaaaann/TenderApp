@@ -161,5 +161,7 @@ struct EditTenderView: View {
         requirements: "Sample requirements",
         status: .active
     ))
+    .environment(AuthenticationService())
+    .modelContainer(for: [TenderData.self, User.self], inMemory: true)
     .preferredColorScheme(.light)
 }

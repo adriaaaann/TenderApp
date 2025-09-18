@@ -4,6 +4,8 @@ import SwiftData
 struct OrganizationDashboardView: View {
     @State private var selectedTender: TenderData?
     @State private var showingTenderDetails = false
+    @State private var showingProposals = false
+    @State private var selectedTenderForProposals: TenderData?
     @Environment(AuthenticationService.self) private var authService
     
     var body: some View {
@@ -18,10 +20,16 @@ struct OrganizationDashboardView: View {
                         
                         StatisticsSection()
                         
-                        MyTendersSection { tender in
-                            selectedTender = tender
-                            showingTenderDetails = true
-                        }
+                        MyTendersSection(
+                            onTenderTap: { tender in
+                                selectedTender = tender
+                                showingTenderDetails = true
+                            },
+                            onViewProposals: { tender in
+                                selectedTenderForProposals = tender
+                                showingProposals = true
+                            }
+                        )
                         
                         Spacer()
                             .frame(height: 120)
@@ -37,6 +45,11 @@ struct OrganizationDashboardView: View {
         .sheet(isPresented: $showingTenderDetails) {
             if let selectedTender = selectedTender {
                 ViewTenderDetails(tender: selectedTender, isOrganizationView: true)
+            }
+        }
+        .sheet(isPresented: $showingProposals) {
+            if let selectedTenderForProposals = selectedTenderForProposals {
+                ViewProposalsView(tender: selectedTenderForProposals)
             }
         }
     }
@@ -162,6 +175,7 @@ struct MyTendersSection: View {
     @Query(sort: \TenderData.dateCreated, order: .reverse) private var tenders: [TenderData]
     @State private var showingCreateTender = false
     let onTenderTap: (TenderData) -> Void
+    let onViewProposals: (TenderData) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -216,9 +230,15 @@ struct MyTendersSection: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(Array(tenders.prefix(3)), id: \.id) { tender in
-                        TenderCard(tender: tender, onViewDetails: {
-                            onTenderTap(tender)
-                        })
+                        TenderCard(
+                            tender: tender,
+                            onViewDetails: {
+                                onTenderTap(tender)
+                            },
+                            onViewProposals: {
+                                onViewProposals(tender)
+                            }
+                        )
                     }
                     
                     if tenders.count > 3 {
@@ -240,6 +260,7 @@ struct MyTendersSection: View {
 struct TenderCard: View {
     let tender: TenderData
     let onViewDetails: () -> Void
+    let onViewProposals: () -> Void
     
     var body: some View {
         VStack(spacing: 16) {
@@ -316,7 +337,8 @@ struct TenderCard: View {
                 Spacer()
                 
                 if tender.status == .active {
-                    Button("Manage") {
+                    Button("View proposals") {
+                        onViewProposals()
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
@@ -412,4 +434,6 @@ struct TabBarItem: View {
 
 #Preview {
     OrganizationDashboardView()
+        .environment(AuthenticationService())
+        .modelContainer(for: [TenderData.self, User.self, ProposalData.self], inMemory: true)
 }

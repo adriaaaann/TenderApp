@@ -1,43 +1,61 @@
 import SwiftUI
 
 struct AppColors {
-    static let primary = Color(red: 0.2, green: 0.4, blue: 1.0)
-    static let primaryDark = Color(red: 0.1, green: 0.3, blue: 0.9)
-    static let primaryLight = Color(red: 0.9, green: 0.95, blue: 1.0)
+    static let primary = Color(red: 0.2, green: 0.5, blue: 0.9)
+    static let accent = Color(red: 0.25, green: 0.45, blue: 0.95)
+    static let success = Color(red: 0.2, green: 0.7, blue: 0.3)
+    static let warning = Color(red: 0.95, green: 0.65, blue: 0.2)
+    static let error = Color(red: 0.9, green: 0.3, blue: 0.3)
     
     static let primaryText = Color(red: 0.1, green: 0.1, blue: 0.1)
     static let secondaryText = Color(red: 0.4, green: 0.4, blue: 0.4)
     static let tertiaryText = Color(red: 0.6, green: 0.6, blue: 0.6)
+    static let inverseText = Color.white
     
-    static let background = Color(red: 0.98, green: 0.98, blue: 1.0)
-    static let cardBackground = Color.white
-    static let inputBackground = Color(red: 0.97, green: 0.97, blue: 0.98)
+    static let background = Color(red: 0.98, green: 0.99, blue: 1.0)
+    static let surfaceBackground = Color.white
+    static let subtleBackground = Color(red: 0.95, green: 0.97, blue: 1.0)
     
-    static let success = Color.green
-    static let warning = Color.orange
-    static let error = Color.red
+    static let separator = Color(red: 0.9, green: 0.9, blue: 0.9)
+    static let hover = Color(red: 0.95, green: 0.95, blue: 0.95)
     
-    static let shadow = Color.black.opacity(0.05)
-    static let border = Color.gray.opacity(0.2)
+    static let primaryDark = primary
+    static let primaryLight = subtleBackground
+    static let cardBackground = surfaceBackground
+    static let inputBackground = subtleBackground
+    static let shadow = Color.black.opacity(0.03)
+    static let border = separator
 }
 
 struct AppFonts {
-    static let displayLarge = Font.system(size: 52, weight: .bold, design: .rounded)
-    static let displayMedium = Font.system(size: 32, weight: .bold, design: .rounded)
     
-    static let headingLarge = Font.system(size: 24, weight: .semibold)
-    static let headingMedium = Font.system(size: 20, weight: .semibold)
-    static let headingSmall = Font.system(size: 18, weight: .medium)
+    static let displayLarge = Font.system(size: 40, weight: .light)
+    static let displayMedium = Font.system(size: 32, weight: .regular)
+    static let titleLarge = Font.system(size: 28, weight: .medium)
+    static let titleMedium = Font.system(size: 24, weight: .medium)
+    static let titleSmall = Font.system(size: 20, weight: .semibold)
     
-    static let bodyLarge = Font.system(size: 18, weight: .regular)
-    static let bodyMedium = Font.system(size: 16, weight: .regular)
-    static let bodySmall = Font.system(size: 14, weight: .regular)
+    static let headingLarge = Font.system(size: 18, weight: .semibold)
+    static let headingMedium = Font.system(size: 16, weight: .medium)
+    static let headingSmall = Font.system(size: 14, weight: .medium)
     
-    static let buttonLarge = Font.system(size: 18, weight: .semibold)
-    static let buttonMedium = Font.system(size: 16, weight: .medium)
-    static let buttonSmall = Font.system(size: 14, weight: .medium)
+    static let bodyLarge = Font.system(size: 17, weight: .regular)
+    static let bodyMedium = Font.system(size: 15, weight: .regular)
+    static let bodySmall = Font.system(size: 13, weight: .regular)
+    
+    static let labelLarge = Font.system(size: 15, weight: .semibold)
+    static let labelMedium = Font.system(size: 13, weight: .semibold)
+    static let labelSmall = Font.system(size: 11, weight: .medium)
     
     static let caption = Font.system(size: 12, weight: .regular)
+    static let overline = Font.system(size: 10, weight: .semibold)
+    
+    
+    static let headingMedium_old = headingLarge
+    static let headingSmall_old = headingMedium
+    static let buttonLarge = labelLarge
+    static let buttonMedium = labelMedium
+    static let buttonSmall = labelSmall
     static let captionMedium = Font.system(size: 12, weight: .medium)
 }
 
@@ -401,14 +419,16 @@ struct ContentView: View {
     var body: some View {
         Group {
             if authService.isAuthenticated {
-                // Show appropriate dashboard based on user role
-                if authService.currentUser?.role == .organization {
-                    OrganizationDashboardView()
+                if let currentUser = authService.currentUser {
+                    if currentUser.role == .organization {
+                        OrganizationDashboardView()
+                    } else {
+                        VendorDashboardView()
+                    }
                 } else {
-                    VendorDashboardView()
+                    welcomeView
                 }
             } else {
-                
                 welcomeView
             }
         }

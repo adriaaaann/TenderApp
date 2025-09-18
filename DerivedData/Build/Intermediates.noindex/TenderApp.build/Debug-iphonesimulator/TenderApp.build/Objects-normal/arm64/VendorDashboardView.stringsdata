@@ -7,7 +7,7 @@
         "key": "Vendor Portal",
         "location": {
           "startingColumn": 26,
-          "startingLine": 99
+          "startingLine": 101
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "Browse Open Tenders",
         "location": {
           "startingColumn": 30,
-          "startingLine": 108
+          "startingLine": 110
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Sign Out",
         "location": {
           "startingColumn": 28,
-          "startingLine": 117
+          "startingLine": 119
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "Search tenders...",
         "location": {
           "startingColumn": 35,
-          "startingLine": 169
+          "startingLine": 171
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "Open Tenders",
         "location": {
           "startingColumn": 22,
-          "startingLine": 212
+          "startingLine": 214
         }
       },
       {
@@ -47,7 +47,7 @@
         "key": "%lld Available",
         "location": {
           "startingColumn": 22,
-          "startingLine": 218
+          "startingLine": 220
         }
       },
       {
@@ -55,7 +55,7 @@
         "key": "Budget Range",
         "location": {
           "startingColumn": 38,
-          "startingLine": 305
+          "startingLine": 307
         }
       },
       {
@@ -63,7 +63,7 @@
         "key": "$%@ - $%@",
         "location": {
           "startingColumn": 38,
-          "startingLine": 309
+          "startingLine": 311
         }
       },
       {
@@ -71,7 +71,7 @@
         "key": "Location",
         "location": {
           "startingColumn": 38,
-          "startingLine": 317
+          "startingLine": 319
         }
       },
       {
@@ -79,7 +79,7 @@
         "key": "Deadline: %@",
         "location": {
           "startingColumn": 38,
-          "startingLine": 333
+          "startingLine": 335
         }
       },
       {
@@ -87,7 +87,7 @@
         "key": "%lld days left",
         "location": {
           "startingColumn": 57,
-          "startingLine": 346
+          "startingLine": 348
         }
       },
       {
@@ -95,7 +95,7 @@
         "key": "Expired",
         "location": {
           "startingColumn": 83,
-          "startingLine": 346
+          "startingLine": 348
         }
       },
       {
@@ -103,7 +103,7 @@
         "key": "View Details",
         "location": {
           "startingColumn": 34,
-          "startingLine": 370
+          "startingLine": 372
         }
       },
       {
@@ -111,7 +111,7 @@
         "key": "Submit Proposal",
         "location": {
           "startingColumn": 38,
-          "startingLine": 383
+          "startingLine": 385
         }
       },
       {
@@ -119,7 +119,7 @@
         "key": "No Open Tenders",
         "location": {
           "startingColumn": 18,
-          "startingLine": 408
+          "startingLine": 410
         }
       },
       {
@@ -127,7 +127,111 @@
         "key": "There are currently no open tenders matching your criteria. Check back later for new opportunities.",
         "location": {
           "startingColumn": 18,
-          "startingLine": 412
+          "startingLine": 414
+        }
+      },
+      {
+        "comment": "",
+        "key": "My Proposals",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 500
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 506
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Proposals Yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 518
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submit your first proposal to get started",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 522
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submitted",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 589
+        }
+      },
+      {
+        "comment": "",
+        "key": "Proposal Details",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 620
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submitted %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 629
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company Information",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 639
+        }
+      },
+      {
+        "comment": "",
+        "key": "Proposal Details",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 655
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 666
+        }
+      },
+      {
+        "comment": "",
+        "key": "Experience",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 677
+        }
+      },
+      {
+        "comment": "",
+        "key": "Attachments",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 689
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 707
         }
       }
     ]

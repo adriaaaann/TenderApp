@@ -4,17 +4,23 @@ import SwiftData
 struct CreateProposalView: View {
     let tender: TenderData
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AuthenticationService.self) private var authService
     
     @State private var companyName = ""
     @State private var contactPerson = ""
     @State private var email = ""
     @State private var phone = ""
+    @State private var proposalTitle = ""
     @State private var proposedBudget = ""
     @State private var timeline = ""
     @State private var proposalDescription = ""
     @State private var experience = ""
     @State private var attachments: [String] = []
     @State private var showingSuccessAlert = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    @State private var hasExistingProposal = false
     
     init(tender: TenderData) {
         self.tender = tender
@@ -28,6 +34,9 @@ struct CreateProposalView: View {
                     VStack(spacing: 24) {
                         ProposalHeaderSection(tender: tender)
                         
+                        if hasExistingProposal {
+                            ExistingProposalView(tender: tender)
+                        } else {
                         CompanyDetailsSection(
                             companyName: $companyName,
                             contactPerson: $contactPerson,
@@ -36,6 +45,7 @@ struct CreateProposalView: View {
                         )
                         
                         ProposalDetailsSection(
+                            proposalTitle: $proposalTitle,
                             proposedBudget: $proposedBudget,
                             timeline: $timeline,
                             proposalDescription: $proposalDescription,
@@ -46,6 +56,7 @@ struct CreateProposalView: View {
                         
                         SubmitProposalButton {
                             submitProposal()
+                        }
                         }
                         
                         Spacer(minLength: 100)
@@ -79,12 +90,125 @@ struct CreateProposalView: View {
         } message: {
             Text("Your proposal has been submitted successfully. You will be notified when the organization reviews your submission.")
         }
+        .alert("Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+        .onAppear {
+            checkForExistingProposal()
+            prefillVendorInfo()
+        }
     }
     
     private func submitProposal() {
-        // Here you would typically save the proposal to your data model
-        // For now, we'll just show the success alert
-        showingSuccessAlert = true
+        guard !companyName.isEmpty else {
+            errorMessage = "Company name is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !contactPerson.isEmpty else {
+            errorMessage = "Contact person is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !email.isEmpty else {
+            errorMessage = "Email is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !proposalTitle.isEmpty else {
+            errorMessage = "Proposal title is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !proposedBudget.isEmpty else {
+            errorMessage = "Proposed budget is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !timeline.isEmpty else {
+            errorMessage = "Timeline is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !proposalDescription.isEmpty else {
+            errorMessage = "Proposal description is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard let currentUser = authService.currentUser else {
+            errorMessage = "You must be logged in to submit a proposal"
+            showingErrorAlert = true
+            return
+        }
+        
+        if hasExistingProposal {
+            errorMessage = "You have already submitted a proposal for this tender"
+            showingErrorAlert = true
+            return
+        }
+        
+        let proposal = ProposalData(
+            tenderId: tender.id,
+            vendorEmail: currentUser.email,
+            vendorName: currentUser.fullName,
+            companyName: companyName,
+            contactPerson: contactPerson,
+            email: email,
+            phone: phone,
+            proposalTitle: proposalTitle,
+            proposedBudget: proposedBudget,
+            timeline: timeline,
+            proposalDescription: proposalDescription,
+            experience: experience,
+            attachments: attachments
+        )
+        
+        do {
+            modelContext.insert(proposal)
+            try modelContext.save()
+            showingSuccessAlert = true
+        } catch {
+            errorMessage = "Failed to submit proposal: \(error.localizedDescription)"
+            showingErrorAlert = true
+        }
+    }
+    
+    private func checkForExistingProposal() {
+        guard let currentUser = authService.currentUser else { return }
+        
+        let tenderId = tender.id
+        let vendorEmail = currentUser.email
+        let descriptor = FetchDescriptor<ProposalData>(
+            predicate: #Predicate<ProposalData> { proposal in
+                proposal.tenderId == tenderId && proposal.vendorEmail == vendorEmail
+            }
+        )
+        
+        do {
+            let existingProposals = try modelContext.fetch(descriptor)
+            hasExistingProposal = !existingProposals.isEmpty
+        } catch {
+            print("Error checking for existing proposal: \(error)")
+        }
+    }
+    
+    private func prefillVendorInfo() {
+        guard let currentUser = authService.currentUser else { return }
+        
+        email = currentUser.email
+        contactPerson = currentUser.fullName
+        if let company = currentUser.companyName {
+            companyName = company
+        }
     }
 }
 
@@ -215,6 +339,7 @@ struct CompanyDetailsSection: View {
 }
 
 struct ProposalDetailsSection: View {
+    @Binding var proposalTitle: String
     @Binding var proposedBudget: String
     @Binding var timeline: String
     @Binding var proposalDescription: String
@@ -227,6 +352,13 @@ struct ProposalDetailsSection: View {
                 .foregroundColor(AppColors.primaryText)
             
             VStack(spacing: 16) {
+                ProposalInputField(
+                    title: "Proposal Title",
+                    placeholder: "Enter a title for your proposal",
+                    text: $proposalTitle,
+                    isRequired: true
+                )
+                
                 ProposalInputField(
                     title: "Proposed Budget",
                     placeholder: "Enter your proposed budget (e.g., $50,000)",
@@ -271,7 +403,6 @@ struct AttachmentsSection: View {
             
             VStack(spacing: 16) {
                 Button(action: {
-                    // Simulate adding an attachment
                     attachments.append("Portfolio.pdf")
                 }) {
                     HStack {
@@ -474,6 +605,73 @@ struct SubmitProposalButton: View {
     }
 }
 
+struct ExistingProposalView: View {
+    let tender: TenderData
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Header
+            VStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 50))
+                    .foregroundColor(AppColors.primary)
+                
+                Text("Proposal Already Submitted")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(AppColors.primaryText)
+                
+                Text("You have already submitted a proposal for this tender.")
+                    .font(.system(size: 16))
+                    .foregroundColor(AppColors.secondaryText)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 40)
+            
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Tender Details:")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(AppColors.primaryText)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(tender.title)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(AppColors.primaryText)
+                    
+                    Text("Deadline: \(tender.deadline)")
+                        .font(.system(size: 14))
+                        .foregroundColor(AppColors.secondaryText)
+                    
+                    Text("Budget: $\(tender.minimumBudget) - $\(tender.maximumBudget)")
+                        .font(.system(size: 14))
+                        .foregroundColor(AppColors.secondaryText)
+                }
+            }
+            .padding(16)
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(12)
+            
+            Spacer()
+            
+            Button(action: {
+                dismiss()
+            }) {
+                HStack {
+                    Text("Close")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(AppColors.primary)
+                .cornerRadius(25)
+            }
+        }
+        .padding(24)
+        .navigationBarHidden(true)
+    }
+}
+
 #Preview {
     CreateProposalView(tender: TenderData(
         title: "Mobile App Development",
@@ -485,5 +683,6 @@ struct SubmitProposalButton: View {
         projectDescription: "We are looking for a skilled mobile app development team to create a cross-platform mobile application for our business.",
         requirements: "Experience with React Native or Flutter, portfolio of previous mobile apps, ability to integrate with REST APIs."
     ))
-    .modelContainer(for: TenderData.self, inMemory: true)
+    .environment(AuthenticationService())
+    .modelContainer(for: [TenderData.self, User.self, ProposalData.self], inMemory: true)
 }
