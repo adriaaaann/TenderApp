@@ -75,12 +75,12 @@ struct ViewProposalsView: View {
                         LazyVStack(spacing: 1) {
                             if showRankedView {
                                 ForEach(rankedProposals, id: \.proposal.id) { rankedProposal in
-                                    RankedProposalRow(rankedProposal: rankedProposal)
+                                    RankedProposalRow(rankedProposal: rankedProposal, tender: tender)
                                         .background(AppColors.surfaceBackground)
                                 }
                             } else {
                                 ForEach(proposals, id: \.id) { proposal in
-                                    MinimalProposalRow(proposal: proposal)
+                                    MinimalProposalRow(proposal: proposal, tender: tender)
                                         .background(AppColors.surfaceBackground)
                                 }
                             }
@@ -203,6 +203,7 @@ struct ProposalStatusBadge: View {
 
 struct MinimalProposalRow: View {
     let proposal: ProposalData
+    let tender: TenderData
     @State private var showingDetails = false
     
     var body: some View {
@@ -253,7 +254,7 @@ struct MinimalProposalRow: View {
         }
         .buttonStyle(MinimalRowButtonStyle())
         .sheet(isPresented: $showingDetails) {
-            MinimalProposalDetailView(proposal: proposal)
+            MinimalProposalDetailView(proposal: proposal, tender: tender)
         }
     }
 }
@@ -268,6 +269,7 @@ struct MinimalRowButtonStyle: ButtonStyle {
 
 struct RankedProposalRow: View {
     let rankedProposal: ProposalRankingService.RankedProposal
+    let tender: TenderData
     @State private var showingDetails = false
     
     private var rankColor: Color {
@@ -302,7 +304,7 @@ struct RankedProposalRow: View {
         }) {
             VStack(spacing: 0) {
                 HStack(alignment: .top, spacing: 16) {
-                    // Rank Badge
+                   
                     VStack {
                         Text("#\(rankedProposal.rank)")
                             .font(.system(size: 16, weight: .bold))
@@ -328,7 +330,7 @@ struct RankedProposalRow: View {
                             .font(AppFonts.bodySmall)
                             .foregroundColor(AppColors.secondaryText)
                         
-                        // Strengths
+                     
                         if !rankedProposal.strengths.isEmpty {
                             HStack {
                                 ForEach(rankedProposal.strengths.prefix(2), id: \.self) { strength in
@@ -374,7 +376,7 @@ struct RankedProposalRow: View {
                     
                     Spacer()
                     
-                    // Score breakdown preview
+                    
                     Text("Budget: \(Int(rankedProposal.individualScores.budgetScore)) • Quality: \(Int(rankedProposal.individualScores.qualityScore))")
                         .font(AppFonts.caption)
                         .foregroundColor(AppColors.tertiaryText)
@@ -389,7 +391,7 @@ struct RankedProposalRow: View {
         }
         .buttonStyle(MinimalRowButtonStyle())
         .sheet(isPresented: $showingDetails) {
-            RankedProposalDetailView(rankedProposal: rankedProposal)
+            RankedProposalDetailView(rankedProposal: rankedProposal, tender: tender)
         }
     }
 }
@@ -630,7 +632,7 @@ struct ProposalAttachmentsView: View {
                         Spacer()
                         
                         Button(action: {
-                            // Handle attachment download/view
+                           
                         }) {
                             Image(systemName: "square.and.arrow.down")
                                 .foregroundColor(AppColors.primary)
@@ -648,12 +650,14 @@ struct ProposalAttachmentsView: View {
 
 struct MinimalProposalDetailView: View {
     let proposal: ProposalData
+    let tender: TenderData
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var modelContext
     @State private var selectedStatus: ProposalStatus
     
-    init(proposal: ProposalData) {
+    init(proposal: ProposalData, tender: TenderData) {
         self.proposal = proposal
+        self.tender = tender
         self._selectedStatus = State(initialValue: .pending)
     }
     
@@ -843,7 +847,7 @@ struct MinimalProposalDetailView: View {
             .background(AppColors.surfaceBackground)
             .navigationBarHidden(true)
             .onAppear {
-                // Set status to pending when view appears
+               
                 selectedStatus = .pending
                 proposal.status = .pending
                 do {
@@ -856,15 +860,24 @@ struct MinimalProposalDetailView: View {
     }
     
     private func updateProposalStatus() {
-        // Update the proposal's status in the database
+        
+        let oldStatus = proposal.status
         proposal.status = selectedStatus
         
         do {
             try modelContext.save()
             print("Successfully updated proposal status to: \(selectedStatus.rawValue)")
+            
+           
+            if oldStatus != selectedStatus {
+                NotificationService.shared.notifyVendorOfProposalStatusChange(
+                    proposal: proposal,
+                    tender: tender,
+                    modelContext: modelContext
+                )
+            }
         } catch {
             print("Failed to update proposal status: \(error)")
-            // Revert the selectedStatus if save failed
             selectedStatus = proposal.status
         }
     }
@@ -872,12 +885,14 @@ struct MinimalProposalDetailView: View {
 
 struct RankedProposalDetailView: View {
     let rankedProposal: ProposalRankingService.RankedProposal
+    let tender: TenderData
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var modelContext
     @State private var selectedStatus: ProposalStatus
     
-    init(rankedProposal: ProposalRankingService.RankedProposal) {
+    init(rankedProposal: ProposalRankingService.RankedProposal, tender: TenderData) {
         self.rankedProposal = rankedProposal
+        self.tender = tender
         self._selectedStatus = State(initialValue: rankedProposal.proposal.status)
     }
     
@@ -885,7 +900,7 @@ struct RankedProposalDetailView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Ranking Overview
+                    
                     VStack(spacing: 16) {
                         HStack {
                             VStack {
@@ -927,7 +942,7 @@ struct RankedProposalDetailView: View {
                         .cornerRadius(12)
                     }
                     
-                    // Score Breakdown
+                    
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Score Breakdown")
                             .font(.title2)
@@ -947,7 +962,7 @@ struct RankedProposalDetailView: View {
                     .background(AppColors.cardBackground)
                     .cornerRadius(12)
                     
-                    // Strengths & Concerns
+                    
                     HStack(alignment: .top, spacing: 16) {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Strengths")
@@ -994,7 +1009,6 @@ struct RankedProposalDetailView: View {
                         }
                     }
                     
-                    // Original Proposal Details
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Proposal Details")
                             .font(.title2)
@@ -1011,7 +1025,6 @@ struct RankedProposalDetailView: View {
                         }
                     }
                     
-                    // Status Update
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Proposal Status")
                             .font(.title2)
@@ -1077,11 +1090,21 @@ struct RankedProposalDetailView: View {
     }
     
     private func updateProposalStatus() {
+        let oldStatus = rankedProposal.proposal.status
         rankedProposal.proposal.status = selectedStatus
         
         do {
             try modelContext.save()
             print("Successfully updated proposal status to: \(selectedStatus.rawValue)")
+            
+            
+            if oldStatus != selectedStatus {
+                NotificationService.shared.notifyVendorOfProposalStatusChange(
+                    proposal: rankedProposal.proposal,
+                    tender: tender,
+                    modelContext: modelContext
+                )
+            }
         } catch {
             print("Failed to update proposal status: \(error)")
             selectedStatus = rankedProposal.proposal.status

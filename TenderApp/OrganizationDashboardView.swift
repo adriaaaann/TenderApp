@@ -110,17 +110,24 @@ struct HeaderSection: View {
 
 struct StatisticsSection: View {
     @Query private var tenders: [TenderData]
+    @Query private var proposals: [ProposalData]
     
     private var activeTenders: Int {
         tenders.filter { $0.status == .active }.count
     }
     
     private var totalProposals: Int {
-        tenders.reduce(0) { $0 + $1.applicationsCount }
+        // Count all proposals that belong to the organization's tenders
+        let tenderIds = Set(tenders.map { $0.id })
+        return proposals.filter { tenderIds.contains($0.tenderId) }.count
     }
     
-    private var pendingTenders: Int {
-        tenders.filter { $0.status == .pending }.count
+    private var pendingReviews: Int {
+        // Count proposals with pending status for all organization's tenders
+        let tenderIds = Set(tenders.map { $0.id })
+        return proposals.filter { 
+            tenderIds.contains($0.tenderId) && $0.status == .pending 
+        }.count
     }
     
     var body: some View {
@@ -136,7 +143,7 @@ struct StatisticsSection: View {
             HStack(spacing: 12) {
                 StatCard(number: "\(activeTenders)", title: "Active\nTenders", color: AppColors.primary)
                 StatCard(number: "\(totalProposals)", title: "Total\nProposals", color: AppColors.success)
-                StatCard(number: "\(pendingTenders)", title: "Pending\nReviews", color: AppColors.warning)
+                StatCard(number: "\(pendingReviews)", title: "Pending\nReview", color: AppColors.warning)
             }
         }
     }
@@ -261,6 +268,11 @@ struct TenderCard: View {
     let tender: TenderData
     let onViewDetails: () -> Void
     let onViewProposals: () -> Void
+    @Query private var proposals: [ProposalData]
+    
+    private var proposalCount: Int {
+        proposals.filter { $0.tenderId == tender.id }.count
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -281,7 +293,7 @@ struct TenderCard: View {
                         .font(.system(size: 12))
                         .foregroundColor(AppColors.primary)
                     
-                    Text("\(tender.applicationsCount) proposals")
+                    Text("\(proposalCount) proposals")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(AppColors.secondaryText)
                 }

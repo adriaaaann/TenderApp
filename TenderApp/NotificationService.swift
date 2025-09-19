@@ -4,7 +4,7 @@ import SwiftData
 class NotificationService: ObservableObject {
     static let shared = NotificationService()
     
-    private init() {}
+    init() {}
     
     func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
@@ -130,5 +130,75 @@ class NotificationService: ObservableObject {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         UNUserNotificationCenter.current().setBadgeCount(0)
+    }
+    
+    func notifyVendorOfProposalStatusChange(proposal: ProposalData, tender: TenderData, modelContext: ModelContext) {
+        let vendorEmail = proposal.vendorEmail
+        let descriptor = FetchDescriptor<User>(predicate: #Predicate<User> { user in
+            user.email == vendorEmail
+        })
+        
+        do {
+            let users = try modelContext.fetch(descriptor)
+            
+            let vendors = users.filter { $0.role == .vendor }
+            guard let vendor = vendors.first else {
+                print("Vendor not found for proposal notification: \(proposal.vendorEmail)")
+                return
+            }
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Proposal Status Updated"
+            
+            let diplomaticMessage = createDiplomaticMessage(
+                status: proposal.status,
+                tenderTitle: tender.title,
+                vendorName: vendor.fullName
+            )
+            
+            content.body = diplomaticMessage
+            content.sound = UNNotificationSound.default
+            content.badge = 1
+            
+            content.userInfo = [
+                "proposalId": proposal.id.uuidString,
+                "tenderId": tender.id.uuidString,
+                "tenderTitle": tender.title,
+                "status": proposal.status.rawValue,
+                "vendorEmail": proposal.vendorEmail,
+                "action": "proposal_status_updated"
+            ]
+            
+            let identifier = "proposal-status-\(proposal.id.uuidString)-\(proposal.status.rawValue.lowercased())"
+            let request = UNNotificationRequest(
+                identifier: identifier,
+                content: content,
+                trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            )
+            
+            UNUserNotificationCenter.current().add(request) { error in
+                if let error = error {
+                    print("Error scheduling proposal status notification for vendor \(vendor.email): \(error)")
+                } else {
+                    print("Proposal status notification sent to vendor: \(vendor.email) - Status: \(proposal.status.rawValue)")
+                }
+            }
+            
+        } catch {
+            print("Error fetching vendor for proposal status notification: \(error)")
+        }
+    }
+    
+    private func createDiplomaticMessage(status: ProposalStatus, tenderTitle: String, vendorName: String) -> String {
+        switch status {
+        case .pending:
+            return "Thank you for your proposal submission for '\(tenderTitle)'. We are currently reviewing your application and will update you on our decision."
+            
+        case .accepted:
+            return "We are pleased to inform you that your proposal for '\(tenderTitle)' has been accepted. We look forward to working with you on this project."
+            
+        case .rejected:
+            return "Thank you for your interest in '\(tenderTitle)'. After careful consideration, we have decided to proceed with another vendor for this project. We appreciate your time and effort in preparing your proposal."
+        }
     }
 }
